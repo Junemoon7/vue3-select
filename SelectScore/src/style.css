@@ -1,0 +1,35 @@
+:root{
+  --primary: #E11D48,
+  --primary-dark: #C32345,
+  --gary: #9CA3AF,
+  --light: #F3F4F6,
+  --dark: #111827
+  
+
+}
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat',sans-serif;
+}
+
+a{
+  color: var(--primary);
+}
+input{
+  appearance: none;
+  outline:none;
+  border: none;
+  background: none;
+}
+
+.logo{
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 5px;
+  padding: 0.5rem;
+  padding-right: calc(0.5rem-5px);
+  border: 2px solid #FFF;
+}
