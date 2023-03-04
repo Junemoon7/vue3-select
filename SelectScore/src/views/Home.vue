@@ -39,45 +39,38 @@ const SubmitHandel = async () => {
   if (String(studentNum.value).length < 8) {
     return alert("请填写完整学号");
   }
-  console.log(toString(studentNum.value).length);
 
-  router.push({
-    name: "Result",
-    params: { studentNum: studentNum.value, sex: sex.value, Date: date.value },
-  });
+
   // router.push("/Result");
-  const res = await axios({
+  await axios({
     method: "get",
-    url: "http://127.0.0.1:5173/Result",
+    url: "http://localhost:3000/students",
     params: {
       studentNum: studentNum.value,
       Date: date.value,
       sex: sex.value,
     },
   })
-    .then((Response) => console.log(Response))
+    .then((Response) => {
+      router.push({
+        name: "Result",
+        params: { studentNum: studentNum.value, sex: sex.value, Date: date.value, List: encodeURIComponent(JSON.stringify(Response)) },
+      });
+      console.log(Response);
+    })
     .catch((err) => {
-      console.log("Error", error.message);
+      console.log("Error", err.message);
+      alert('服务器繁忙，请稍后重试')
     });
-  if (res.status == 200) {
-    router.push({
-      name: "Result",
-      params: {
-        studentNum: studentNum.value,
-        sex: sex.value,
-        date: date.value,
-      },
-    });
-  } else {
-    alert("请求失败");
-  }
+
+
 };
 
 watch(value2, (value, oldValue) => {
   date.value = ChangeDate(value);
   console.log(date.value);
 });
-// console.log(ChangeDate(value2));
+console.log(ChangeDate(value2));
 // const value1 = <Date>ref(ChangeDate(value2))
 const shortcuts = [
   {
@@ -110,9 +103,7 @@ const disabledDate = (time: Date) => {
   <main>
     <header>
       <div id="chxy">
-        <a href="https://www.chu.edu.cn/" target="blank"
-          ><img src="../../img/chxy.png" alt=""
-        /></a>
+        <a href="https://www.chu.edu.cn/" target="blank"><img src="../../img/chxy.png" alt="" /></a>
       </div>
       <div class="logo">SELECT SCORE</div>
 
@@ -122,23 +113,13 @@ const disabledDate = (time: Date) => {
     <form @submit.prevent="SubmitHandel">
       <label for="">
         <span>输入你的学号</span>
-        <input
-          type="number"
-          v-model="studentNum"
-          placeholder="请输入8位学号"
-          oninput="if(value.length>8)value=value.slice(0,8)"
-        />
+        <input type="number" v-model="studentNum" placeholder="请输入8位学号"
+          oninput="if(value.length>8)value=value.slice(0,8)" />
         <div class="demo-date-picker">
           <div class="block">
             <span class="demonstration">请选择日期</span>
-            <el-date-picker
-              v-model="value2"
-              type="date"
-              placeholder="Pick a day"
-              :disabled-date="disabledDate"
-              :shortcuts="shortcuts"
-              :size="size"
-            />
+            <el-date-picker v-model="value2" type="date" placeholder="Pick a day" :disabled-date="disabledDate"
+              :shortcuts="shortcuts" :size="size" />
             <div class="mb-2 flex items-center text-sm">
               <el-radio-group v-model="sex" class="ml-4">
                 <el-radio label="男" size="large">🚹</el-radio>
@@ -181,9 +162,11 @@ const disabledDate = (time: Date) => {
   font-size: 14px;
   margin-bottom: 20px;
 }
+
 .ml-4 {
   margin-top: 50px;
 }
+
 main {
   display: flex;
   flex-direction: column;
@@ -193,16 +176,19 @@ main {
   background-color: #e11d48;
   color: #fff;
 }
+
 header {
   padding: 1.5rem;
   width: 100%;
 }
+
 #chxy {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 15px;
 }
+
 footer {
   background-color: #fff;
   width: 100%;
@@ -217,7 +203,7 @@ h2 {
   margin-bottom: 1rem;
 }
 
-h2 ~ p {
+h2~p {
   font-weight: 500;
   font-size: 1rem;
 }
@@ -232,10 +218,12 @@ form {
   padding: 4rem 1.5rem;
   width: 100%;
 }
+
 label {
   display: block;
   margin-bottom: 1.5rem;
 }
+
 label span {
   display: block;
   color: #9ca3af;
@@ -243,6 +231,7 @@ label span {
   font-weight: 500;
   margin-bottom: 0.5rem;
 }
+
 input:not([type="submit"]) {
   display: block;
   width: 100%;
@@ -258,6 +247,7 @@ input:not([type="submit"])::placeholder {
   color: #9ca3af;
   font-style: italic;
 }
+
 input[type="submit"] {
   display: block;
   width: fit-content;
@@ -271,21 +261,26 @@ input[type="submit"] {
   cursor: pointer;
   transition: 0.2s ease;
 }
+
 input[type="submit"]:hover {
   background-color: #c32345;
 }
+
 /deep/ input::-webkit-outer-spin-button,
 /deep/ input::-webkit-inner-spin-button {
   -webkit-appearance: none !important;
 }
+
 /deep/ input[type="number"] {
   -moz-appearance: textfield;
 }
+
 footer span {
   font-family: STKaiti;
   font-size: 2.5rem;
   color: #fff;
 }
+
 footer {
   background-color: #e11d48;
 }
