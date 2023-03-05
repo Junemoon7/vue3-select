@@ -38,9 +38,9 @@ const Logout = async () => {
 };
 let list = decodeURIComponent(route.params.List)
 let StdentData = JSON.parse(list)
-console.log(StdentData.data.data[0]);
-console.log(testdata);
+console.log(StdentData.data);
 // console.log(data);
+
 </script>
 
 <template>
@@ -51,31 +51,24 @@ console.log(testdata);
       </div>
       <div class="logo">SELECT SCORE</div>
 
-      <h2>{{ data.StudentName }}体测成绩</h2>
+      <h1>{{ route.params.studentNum }}体测成绩</h1>
     </header>
     <div></div>
     <form>
-      <h1>Result</h1>
       <ul>
-        <template v-for="(value, key) in StdentData.data.data[0]">
-          <li v-if="value">
-            <span v-if="value"> {{ key }}</span>
-            <span v-if="value">{{ value }}</span>
-            <!-- <span v-if="value">成绩</span> -->
-            <span v-if="value > 95 && value <= 100">优秀</span>
-            <span v-if="value >= 80 && value < 95">良好</span>
-            <span v-if="value <= 80 && value >= 60">及格</span>
-            <span v-if="value < 60">不及格</span>
-          </li>
-        </template>
+        <li><span>科目</span><span>成绩</span><span>得分</span><span>等级</span></li>
+        <li v-for="(value, key) in StdentData.data.data">
+          <span v-for="item in value">{{ item }}</span>
+        </li>
         <li>
           <span>总分</span>
           <!-- 后续换成总分 -->
-          <span>{{ data.subject1 }}</span>
-          <span v-if="data.subject1 > 95 && data.subject1 <= 100">优秀</span>
-          <span v-if="data.subject1 >= 80 && data.subject1 < 95">良好</span>
-          <span v-if="data.subject1 <= 80 && data.subject1 >= 60">及格</span>
-          <span v-if="data.subject1 < 60">不及格</span>
+          <span>
+
+          </span>
+          <span>100</span>
+          <span>优秀</span>
+
         </li>
       </ul>
       <el-backtop :right="20" :bottom="100" />
@@ -122,18 +115,24 @@ ul li:nth-child(2) {
 } */
 ul li span:nth-child(1) {
   display: inline-block;
-  width: 33%;
+  width: 25%;
 }
 
 ul li span:nth-child(2) {
   display: inline-block;
-  width: 67%;
+  width: 25%;
   text-align: right;
 }
 
 ul li span:nth-child(3) {
   display: inline-block;
-  width: 33%;
+  width: 25%;
+  text-align: right;
+}
+
+ul li span:nth-child(4) {
+  display: inline-block;
+  width: 25%;
   text-align: right;
 }
 
