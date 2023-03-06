@@ -12,30 +12,23 @@ import data from "../test.json";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
-import { reactive } from "vue";
-const testdata = reactive(data);
-console.log(testdata);
+import { computed, onBeforeMount, onMounted, reactive } from "vue";
+import { useStore } from "../store";
 const router = useRouter();
 const route = useRoute();
+const store = useStore();
+// onMounted(async () => {
+//   await store.getList();
+
+//   const List = computed(() => {
+//     return store.list;
+//   });
+// });
+const List = computed(() => store.list);
+console.log(List);
 const Logout = async () => {
   router.push("/");
-  const res = await axios({
-    method: "get",
-    url: "http://127.0.0.1:5173/Result",
-    params: {
-      // ssession_token = localStorage.getItem('token')
-    },
-  })
-    .then((res) => {
-      if (res.status == 200) {
-        router.push("./");
-      } else {
-        alert("返回失败");
-      }
-    })
-    .catch((err) => console.log(err));
 };
-console.log(route.params);
 </script>
 
 <template>
@@ -48,20 +41,16 @@ console.log(route.params);
       </div>
       <div class="logo">SELECT SCORE</div>
 
-      <h2>${Name}体测成绩</h2>
+      <h2>{{ route.params.studentNum }}体测成绩</h2>
     </header>
     <div></div>
     <form>
       <h1>Result</h1>
       <ul>
-        <template v-for="(value, key) in testdata">
+        <template v-for="(value, key) in List.data">
           <li v-if="value">
-            <span v-if="value"> {{ key }}</span>
-            <span v-if="value">{{ value }}</span>
-            <span v-if="value > 95">优秀</span>
-            <span v-if="value >= 80 && value < 95">良好</span>
-            <span v-if="value <= 80 && value >= 60">及格</span>
-            <span v-if="value < 60">不及格</span>
+            <span v-for="item in value"> {{ item }}</span>
+            <!-- <span v-if="value">{{ value }}</span> -->
           </li>
         </template>
         <li>
@@ -113,16 +102,21 @@ ul li:nth-child(2) {
 } */
 ul li span:nth-child(1) {
   display: inline-block;
-  width: 33%;
+  width: 25%;
 }
 ul li span:nth-child(2) {
   display: inline-block;
-  width: 67%;
+  width: 25%;
   text-align: right;
 }
 ul li span:nth-child(3) {
   display: inline-block;
-  width: 33%;
+  width: 25%;
+  text-align: right;
+}
+ul li span:nth-child(4) {
+  display: inline-block;
+  width: 25%;
   text-align: right;
 }
 ul li:hover {

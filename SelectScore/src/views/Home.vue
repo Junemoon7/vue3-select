@@ -1,10 +1,12 @@
 <script setup lang='ts'>
 import { useRouter } from "vue-router";
 import { ref, watch } from "vue";
+import { useStore } from "../store";
 import axios from "axios";
 const router = useRouter();
 const studentNum = ref("");
 //节流函数
+const store = useStore();
 function throttle(fn, wait = 300) {
   let timer = null;
   return function () {
@@ -41,35 +43,26 @@ const SubmitHandel = async () => {
   }
   console.log(toString(studentNum.value).length);
 
-  router.push({
-    name: "Result",
-    params: { studentNum: studentNum.value, sex: sex.value, Date: date.value },
-  });
+  // router.push({
+  //   name: "Result",
+  //   params: { studentNum: studentNum.value, sex: sex.value, Date: date.value },
+  // });
   // router.push("/Result");
-  const res = await axios({
-    method: "get",
-    url: "http://127.0.0.1:5173/Result",
-    params: {
-      studentNum: studentNum.value,
-      Date: date.value,
-      sex: sex.value,
-    },
-  })
-    .then((Response) => console.log(Response))
-    .catch((err) => {
-      console.log("Error", error.message);
-    });
-  if (res.status == 200) {
+  await store.getList();
+  const List = store.list;
+  if (List.code == 1) {
     router.push({
       name: "Result",
       params: {
         studentNum: studentNum.value,
         sex: sex.value,
-        date: date.value,
+        Date: date.value,
       },
     });
+    console.log(List.code);
   } else {
     alert("请求失败");
+    console.log(List.code);
   }
 };
 
