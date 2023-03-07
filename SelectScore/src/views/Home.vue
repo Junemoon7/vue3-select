@@ -1,12 +1,24 @@
 <script setup lang='ts'>
 import { useRouter } from "vue-router";
 import { ref, watch } from "vue";
-import { useStore } from "../store";
 import axios from "axios";
+// import { getApiList } from "../server";
 const router = useRouter();
 const studentNum = ref("");
 //节流函数
-const store = useStore();
+const server = axios.create({
+  baseURL: "http://localhost:3000",
+});
+const getApiList = () =>
+  server
+    .get("/students", {
+      params: {
+        studentNum: studentNum.value,
+        sex: sex.value,
+        Date: date.value,
+      },
+    })
+    .then((res) => res.data);
 function throttle(fn, wait = 300) {
   let timer = null;
   return function () {
@@ -42,27 +54,24 @@ const SubmitHandel = async () => {
     return alert("请填写完整学号");
   }
   console.log(toString(studentNum.value).length);
-
-  // router.push({
-  //   name: "Result",
-  //   params: { studentNum: studentNum.value, sex: sex.value, Date: date.value },
-  // });
-  // router.push("/Result");
-  await store.getList();
-  const List = store.list;
-  if (List.code == 1) {
+  const res = await getApiList().catch((err) => {
+    alert("请求失败");
+  });
+  console.log(res.data);
+  if (res.code == 1) {
     router.push({
       name: "Result",
-      params: {
+      query: {
         studentNum: studentNum.value,
         sex: sex.value,
         Date: date.value,
+        res: JSON.stringify(res),
       },
     });
-    console.log(List.code);
+    console.log(res.code);
   } else {
     alert("请求失败");
-    console.log(List.code);
+    console.log(res.code);
   }
 };
 
@@ -70,8 +79,6 @@ watch(value2, (value, oldValue) => {
   date.value = ChangeDate(value);
   console.log(date.value);
 });
-// console.log(ChangeDate(value2));
-// const value1 = <Date>ref(ChangeDate(value2))
 const shortcuts = [
   {
     text: "Today",
@@ -110,7 +117,7 @@ const disabledDate = (time: Date) => {
       <div class="logo">SELECT SCORE</div>
 
       <h2>体测成绩查询</h2>
-      <p>请输入学号及日期查询体测成绩</p>
+      <p>请输入您的学号、日期、性别查询体测成绩</p>
     </header>
     <form @submit.prevent="SubmitHandel">
       <label for="">
@@ -119,7 +126,8 @@ const disabledDate = (time: Date) => {
           type="number"
           v-model="studentNum"
           placeholder="请输入8位学号"
-          oninput="if(value.length>8)value=value.slice(0,8)"
+          min="1"
+          oninput="this.value=this.value.replace(/\D/g);if(this.value.length>8)this.value=this.value.slice(0,8)"
         />
         <div class="demo-date-picker">
           <div class="block">
@@ -127,10 +135,9 @@ const disabledDate = (time: Date) => {
             <el-date-picker
               v-model="value2"
               type="date"
-              placeholder="Pick a day"
+              placeholder="请选择日期"
               :disabled-date="disabledDate"
-              :shortcuts="shortcuts"
-              :size="size"
+              :size="large"
             />
             <div class="mb-2 flex items-center text-sm">
               <el-radio-group v-model="sex" class="ml-4">
@@ -158,7 +165,7 @@ const disabledDate = (time: Date) => {
 }
 
 .demo-date-picker .block {
-  padding: 30px 0;
+  padding: 20px 0;
   text-align: center;
   border-right: solid 1px var(--el-border-color);
   flex: 1;
@@ -222,7 +229,7 @@ form {
   background-color: #fff;
   box-shadow: 0px -4px 12px 4px rgba(0, 0, 0, 0.16);
   color: #111827;
-  padding: 4rem 1.5rem;
+  padding: 3rem 1.5rem;
   width: 100%;
 }
 label {
@@ -257,12 +264,12 @@ input[type="submit"] {
   margin: 0 auto;
   font-size: 1.5rem;
   font-weight: 700;
-  color: ■#FFF;
   background-color: #e11d48;
   padding: 1rem;
   border-radius: 0.5rem;
   cursor: pointer;
   transition: 0.2s ease;
+  color: #fff;
 }
 input[type="submit"]:hover {
   background-color: #c32345;

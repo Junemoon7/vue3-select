@@ -14,4 +14,8 @@ export default defineConfig({
     }),
   ,
   ],
+  server:{
+    host:'10.12.246.147',
+    port:3344,
+  },
 })

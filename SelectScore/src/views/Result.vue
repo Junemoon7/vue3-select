@@ -12,19 +12,11 @@ import data from "../test.json";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
-import { computed, onBeforeMount, onMounted, reactive } from "vue";
-import { useStore } from "../store";
+import { computed, reactive } from "vue";
+
 const router = useRouter();
 const route = useRoute();
-const store = useStore();
-// onMounted(async () => {
-//   await store.getList();
-
-//   const List = computed(() => {
-//     return store.list;
-//   });
-// });
-const List = computed(() => store.list);
+const List = JSON.parse(route.query.res);
 console.log(List);
 const Logout = async () => {
   router.push("/");
@@ -41,12 +33,15 @@ const Logout = async () => {
       </div>
       <div class="logo">SELECT SCORE</div>
 
-      <h2>{{ route.params.studentNum }}体测成绩</h2>
+      <h2>{{ route.query.studentNum }}体测成绩</h2>
     </header>
     <div></div>
     <form>
-      <h1>Result</h1>
       <ul>
+        <li>
+          <span>测试项目</span><span>成绩</span><span>评分</span
+          ><span>评级</span>
+        </li>
         <template v-for="(value, key) in List.data">
           <li v-if="value">
             <span v-for="item in value"> {{ item }}</span>
@@ -57,6 +52,12 @@ const Logout = async () => {
           <span>总分</span>
           <span></span>
           <span>100</span>
+          <span v-if="List.generalComment > 80">优秀</span>
+          <span v-if="List.generalComment > 60 && List.generalComment <= 80"
+            >良好</span
+          >
+          <span v-if="List.generalComment < 60">不及格</span>
+          <span>等待填入</span>
         </li>
       </ul>
       <el-backtop :right="20" :bottom="100" />
